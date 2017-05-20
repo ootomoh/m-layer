@@ -62,5 +62,10 @@ int main(){
 		std::cout<<"out="<<layer1_out<<std::endl;
 		std::cout<<"err="<<error<<std::endl;
 #endif
+		layer1.setD2(error);
+		layer0.backPropagate(error,layer1.getW());
+
+		layer1.reflect();
+		layer0.reflect();
 	}
 }

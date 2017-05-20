@@ -21,8 +21,10 @@ public:
 		z0 = Eigen::MatrixXf(input_size,batch_size);
 		w1 = Eigen::MatrixXf::Random(output_size,input_size);
 		dw1 = Eigen::MatrixXf::Random(output_size,input_size);
+		rdw1 = Eigen::MatrixXf::Random(output_size,input_size);
 		b1 = Eigen::MatrixXf::Random(output_size,1);
-		db1 = Eigen::MatrixXf::Random(output_size,batch_size);
+		db1 = Eigen::MatrixXf::Random(output_size,1);
+		rdb1 = Eigen::MatrixXf::Random(output_size,1);
 		u1 = Eigen::MatrixXf(output_size,batch_size);
 	}
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
@@ -33,7 +35,7 @@ public:
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
 		d1 = u1.unaryExpr( dActivateFunc() ).array() * (w2.transpose()*d2).array();
 		rdw1 = d1*z0.transpose()/static_cast<float>(batch_size);
-		rdb1 = d1/static_cast<float>(batch_size);
+		rdb1 = d1*Eigen::MatrixXf::Constant(batch_size,1,1.0f)/static_cast<float>(batch_size);
 		return d1;
 	}
 	void reflect(){
