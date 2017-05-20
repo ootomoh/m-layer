@@ -1,10 +1,13 @@
 #pragma once
+#include <string>
+#include <stdio.h>
 #include "Eigen/Dense"
 
 template<class ActivateFunc,class dActivateFunc>
 class Layer{
 	int input_size,output_size;
 	int batch_size;
+	std::string layer_name;
 	Eigen::MatrixXf  w1;
 	Eigen::MatrixXf  dw1;
 	Eigen::MatrixXf  rdw1; // round d
@@ -15,8 +18,8 @@ class Layer{
 	Eigen::MatrixXf  z0;
 	Eigen::MatrixXf  d1;
 public:
-	Layer(int input_size,int output_size,int batch_size):
-		input_size(input_size),output_size(output_size),batch_size(batch_size)
+	Layer(int input_size,int output_size,int batch_size,std::string layer_name=""):
+		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name)
 	{
 		z0 = Eigen::MatrixXf(input_size,batch_size);
 		w1 = Eigen::MatrixXf::Random(output_size,input_size);
@@ -28,6 +31,10 @@ public:
 		u1 = Eigen::MatrixXf(output_size,batch_size);
 	}
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
+#ifdef SHOW_WEIGHT
+		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
+		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
+#endif
 		z0 = input;
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
 		return  u1.unaryExpr(ActivateFunc());
