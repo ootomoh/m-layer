@@ -46,9 +46,11 @@ public:
 		return d1;
 	}
 	void reflect(){
-		const float lerning_rate = 0.03f;
-		dw1 = rdw1 * (-lerning_rate);
-		db1 = rdb1 * (-lerning_rate);
+		const float lerning_rate = 0.01f;
+		const float attenuation_rate = 0.9f;
+		dw1 = rdw1 * (-lerning_rate) + dw1 * attenuation_rate;
+		db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
+
 		w1 = w1 + dw1;
 		b1 = b1 + db1;
 	}
