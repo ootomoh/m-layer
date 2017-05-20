@@ -30,7 +30,7 @@ public:
 		return s * (1.0f-s);
 	}
 };
-class Step(){
+class Step{
 public:
 	float operator()(const float x) const{
 		return (x>0.0f?1.0f:0.0f);
