@@ -38,6 +38,8 @@ int main(){
 		initLearningDataset(batch_input,batch_teacher);
 		auto layer0_out = layer0.forwardPropagate(batch_input);
 		auto layer1_out = layer1.forwardPropagate(layer0_out);
+		auto error = layer1_out - batch_teacher;
 		std::cout<<"out="<<layer1_out<<std::endl;
+		std::cout<<"err="<<error<<std::endl;
 	}
 }
