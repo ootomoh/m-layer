@@ -17,9 +17,10 @@ class Layer{
 	Eigen::MatrixXf  u1;
 	Eigen::MatrixXf  z0;
 	Eigen::MatrixXf  d1;
+	float g_sum;
 public:
 	Layer(int input_size,int output_size,int batch_size,std::string layer_name=""):
-		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name)
+		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name),g_sum(0.0f)
 	{
 		z0 = Eigen::MatrixXf(input_size,batch_size);
 		w1 = Eigen::MatrixXf::Random(output_size,input_size);
