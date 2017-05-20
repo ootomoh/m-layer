@@ -46,7 +46,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 		float sum = 0.0f;
 		float *ptr = batch_input.data()+sizeof(float)*b;
 		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		if( sum > input_size/2.0f-1.0f)
+		if( sum > 3.0f || 1.0f > sum )
 			batch_teacher(0,b)=0.0f;
 		else
 			batch_teacher(0,b)=1.0f;
