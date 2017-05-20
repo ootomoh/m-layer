@@ -30,6 +30,7 @@ public:
 		rdb1 = Eigen::MatrixXf::Random(output_size,1);
 		u1 = Eigen::MatrixXf(output_size,batch_size);
 	}
+
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
 #ifdef SHOW_WEIGHT
 		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
