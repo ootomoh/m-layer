@@ -1,13 +1,15 @@
 #include "layer.hpp"
 #include <iostream>
 #include <cmath>
-
+#include <functional>
+#include <algorithm>
+#include <random>
 
 const int input_size = 4;
 const int layer0_output_size = 8;
 const int layer1_output_size = 1;
 const int batch_size = 10;
-const int calc = 1000;
+const int calc = 1;
 
 class Sigmoid{
 public:
@@ -24,9 +26,20 @@ public:
 };
 
 void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
+	std::mt19937 mt(std::random_device{}());
+	std::uniform_int_distribution<int> dist(0,1);
+	float input[input_size];
 	for(int b = 0; b < batch_size;b++){
-
+		float sum = 0.0f;
+		float *ptr = batch_input.data()+sizeof(float)*b;
+		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
+		if( sum > input_size/2.0f-1.0f)
+			batch_teacher(0,b)=1.0f;
+		else
+			batch_teacher(0,b)=0.0f;
 	}
+	std::cout<<"input="<<std::endl<<batch_input<<std::endl;
+	std::cout<<"teacher="<<std::endl<<batch_teacher<<std::endl;
 }
 
 int main(){
