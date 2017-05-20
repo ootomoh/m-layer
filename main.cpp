@@ -6,8 +6,9 @@
 
 
 //#define SHOW_INPUT
-#define SHOW_OUTPUT
-#define SHOW_WEIGHT
+//#define SHOW_OUTPUT
+//#define SHOW_WEIGHT
+#define SHOW_WEIGHT_WHEN_DESTROY
 
 #include "layer.hpp"
 
