@@ -6,8 +6,14 @@
 
 
 //#define SHOW_INPUT
+<<<<<<< HEAD
 #define SHOW_OUTPUT
 //#define SHOW_WEIGHT
+=======
+//#define SHOW_OUTPUT
+//#define SHOW_WEIGHT
+#define SHOW_WEIGHT_WHEN_DESTROY
+>>>>>>> master
 
 #include "layer.hpp"
 
