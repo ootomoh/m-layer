@@ -3,3 +3,6 @@ exec_main: main.cpp layer.hpp
 
 clean:
 	git rm exec*
+
+run: exec_main
+	time ./exec_main
