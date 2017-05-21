@@ -70,7 +70,7 @@ public:
 		return w1;
 	}
 	void showWeight(){
-		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
-		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
+		std::cout<<layer_name.c_str()<<":w = "<<std::endl<<w1<<std::endl;
+		std::cout<<layer_name.c_str()<<":b = "<<std::endl<<b1<<std::endl;
 	}
 };
