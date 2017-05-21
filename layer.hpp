@@ -22,6 +22,7 @@ public:
 		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name)
 	{
 		z0 = Eigen::MatrixXf(input_size,batch_size);
+		//w1 = Eigen::MatrixXf::Constant(output_size,input_size,0.0f);
 		w1 = Eigen::MatrixXf::Random(output_size,input_size);
 		dw1 = Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 = Eigen::MatrixXf::Random(output_size,input_size);
@@ -31,10 +32,6 @@ public:
 		u1 = Eigen::MatrixXf(output_size,batch_size);
 	}
 	~Layer(){
-#ifdef SHOW_WEIGHT_WHEN_DESTROY
-		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
-		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
-#endif
 	}
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
 #ifdef SHOW_WEIGHT
@@ -65,5 +62,9 @@ public:
 	}
 	Eigen::MatrixXf getW() const{
 		return w1;
+	}
+	void showWeight(){
+		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
+		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
 	}
 };
