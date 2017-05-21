@@ -12,8 +12,8 @@
 
 #include "layer.hpp"
 
-const int input_size = 8;
-const int layer0_output_size = 32;
+const int input_size = 4;
+const int layer0_output_size = 16;
 const int layer1_output_size = 1;
 const int batch_size = 16;
 const int calc = 100000;
