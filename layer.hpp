@@ -56,8 +56,8 @@ public:
 		const float attenuation_rate = 0.9f;
 		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr([](float x){return x*x;});
 		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr([](float x){return x*x;});
-		dw1 = rdw1.array() * adagrad_w1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate) + dw1.array() * attenuation_rate;
-		db1 = rdb1.array() * adagrad_b1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate) + db1.array() * attenuation_rate;
+		dw1 = rdw1.array() * adagrad_w1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate);// + dw1.array() * attenuation_rate;
+		db1 = rdb1.array() * adagrad_b1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate);// + db1.array() * attenuation_rate;
 		//db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
 
 		w1 = w1 + dw1;
