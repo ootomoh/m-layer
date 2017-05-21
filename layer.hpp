@@ -23,6 +23,7 @@ public:
 		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name),g_sum(0.0f)
 	{
 		z0 = Eigen::MatrixXf(input_size,batch_size);
+		//w1 = Eigen::MatrixXf::Constant(output_size,input_size,0.0f);
 		w1 = Eigen::MatrixXf::Random(output_size,input_size);
 		dw1 = Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 = Eigen::MatrixXf::Random(output_size,input_size);
@@ -30,6 +31,8 @@ public:
 		db1 = Eigen::MatrixXf::Random(output_size,1);
 		rdb1 = Eigen::MatrixXf::Random(output_size,1);
 		u1 = Eigen::MatrixXf(output_size,batch_size);
+	}
+	~Layer(){
 	}
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
 #ifdef SHOW_WEIGHT
@@ -47,9 +50,11 @@ public:
 		return d1;
 	}
 	void reflect(){
-		const float lerning_rate = 0.03f;
-		dw1 = rdw1 * (-lerning_rate);
-		db1 = rdb1 * (-lerning_rate);
+		const float lerning_rate = 0.01f;
+		const float attenuation_rate = 0.9f;
+		dw1 = rdw1 * (-lerning_rate) + dw1 * attenuation_rate;
+		db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
+
 		w1 = w1 + dw1;
 		b1 = b1 + db1;
 	}
@@ -58,5 +63,9 @@ public:
 	}
 	Eigen::MatrixXf getW() const{
 		return w1;
+	}
+	void showWeight(){
+		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
+		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
 	}
 };

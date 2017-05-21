@@ -7,15 +7,16 @@
 
 //#define SHOW_INPUT
 #define SHOW_OUTPUT
-#define SHOW_WEIGHT
+//#define SHOW_WEIGHT
+//#define SHOW_WEIGHT_WHEN_DESTROY
 
 #include "layer.hpp"
 
-const int input_size = 4;
-const int layer0_output_size = 20;
+const int input_size = 8;
+const int layer0_output_size = 32;
 const int layer1_output_size = 1;
 const int batch_size = 20;
-const int calc = 10000;
+const int calc = 100000;
 
 class Sigmoid{
 public:
@@ -30,6 +31,12 @@ public:
 		return s * (1.0f-s);
 	}
 };
+class Step{
+public:
+	float operator()(const float x) const{
+		return (x>0.0f?1.0f:0.0f);
+	}
+};
 
 void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
 	std::mt19937 mt(std::random_device{}());
@@ -37,9 +44,9 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 	float input[input_size];
 	for(int b = 0; b < batch_size;b++){
 		float sum = 0.0f;
-		float *ptr = batch_input.data()+sizeof(float)*b;
+		float *ptr = batch_input.data()+b*input_size;
 		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		if( sum > input_size/2.0f-1.0f)
+		if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum )
 			batch_teacher(0,b)=0.0f;
 		else
 			batch_teacher(0,b)=1.0f;
@@ -50,7 +57,7 @@ int main(){
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	Layer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
-	Layer<Sigmoid,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
+	Layer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
 #ifdef SHOW_INPUT
@@ -70,4 +77,8 @@ int main(){
 		layer1.reflect();
 		layer0.reflect();
 	}
+#ifdef SHOW_WEIGHT_WHEN_DESTROY
+	layer0.showWeight();
+	layer1.showWeight();
+#endif
 }
