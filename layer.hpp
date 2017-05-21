@@ -31,8 +31,8 @@ public:
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
-		adagrad_w1 	= Eigen::MatrixXf::Zero(output_size,input_size);
-		adagrad_b1 	= Eigen::MatrixXf::Zero(output_size,1);
+		adagrad_w1 	= Eigen::MatrixXf::Constant(output_size,input_size,1.0f);
+		adagrad_b1 	= Eigen::MatrixXf::Constant(output_size,1,1.0f);
 	}
 	~Layer(){
 	}
