@@ -37,6 +37,12 @@ public:
 		return (x>0.0f?1.0f:0.0f);
 	}
 };
+class ReLU{
+public:
+	float operator()(const float x) const{
+		return (x>0.0f?x:0.0f);
+	}
+};
 
 void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
 	std::mt19937 mt(std::random_device{}());
@@ -57,7 +63,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 int main(){
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
-	Layer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
+	Layer<ReLU,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	Layer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
