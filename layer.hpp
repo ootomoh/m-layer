@@ -27,6 +27,7 @@ public:
 		w1 			= Eigen::MatrixXf::Random(output_size,input_size);
 		dw1 		= Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 		= Eigen::MatrixXf::Random(output_size,input_size);
+		//b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
 		b1 			= Eigen::MatrixXf::Random(output_size,1);
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);

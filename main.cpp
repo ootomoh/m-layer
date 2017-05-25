@@ -5,18 +5,18 @@
 #include <random>
 
 
-#define SHOW_INPUT
+//#define SHOW_INPUT
 #define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-#define SHOW_WEIGHT_WHEN_DESTROY
+//#define SHOW_WEIGHT_WHEN_DESTROY
 
 #include "layer.hpp"
 
 const int input_size = 8;
-const int layer0_output_size = 32;
+const int layer0_output_size = 8;
 const int layer1_output_size = 1;
 const int batch_size = 32;
-const int calc = 2000;
+const int calc = 20000;
 
 class Sigmoid{
 public:
@@ -52,8 +52,8 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 		float sum = 0.0f;
 		float *ptr = batch_input.data()+b*input_size;
 		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		//if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum )
-		if( (sum/2.0f)-static_cast<float>(static_cast<int>(sum/2.0f)) > 0.49f )
+		if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum )
+		//if( (sum/2.0f)-static_cast<float>(static_cast<int>(sum/2.0f)) > 0.49f )
 			batch_teacher(0,b)=0.0f;
 		else
 			batch_teacher(0,b)=1.0f;
@@ -63,7 +63,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 int main(){
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
-	Layer<ReLU,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
+	Layer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	Layer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
