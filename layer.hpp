@@ -32,8 +32,8 @@ public:
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
-		adagrad_w1 	= Eigen::MatrixXf::Constant(output_size,input_size,1.0f);
-		adagrad_b1 	= Eigen::MatrixXf::Constant(output_size,1,1.0f);
+		adagrad_w1 	= Eigen::MatrixXf::Zero(output_size,input_size);
+		adagrad_b1 	= Eigen::MatrixXf::Zero(output_size,1);
 	}
 	~Layer(){
 	}
@@ -55,10 +55,13 @@ public:
 	void reflect(){
 		const float lerning_rate = 0.1f;
 		const float attenuation_rate = 0.9f;
-		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr([](float x){return x*x;});
-		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr([](float x){return x*x;});
-		dw1 = rdw1.array() * adagrad_w1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate) + dw1.array() * attenuation_rate;
-		db1 = rdb1.array() * adagrad_b1.unaryExpr([](float x){return 1.0f/std::sqrt(x);}).array() * (-lerning_rate) + db1.array() * attenuation_rate;
+		const float adagrad_epsilon = 1.0f;
+		auto adagrad_make = [&adagrad_epsilon](float x)->float{return 1.0f/(std::sqrt(x)+adagrad_epsilon);};
+		auto adagrad_square = [](float x)->float{return x*x;};
+		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr(adagrad_square);
+		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr(adagrad_square);
+		dw1 = rdw1.array() * adagrad_w1.unaryExpr(adagrad_make).array() * (-lerning_rate) + dw1.array() * attenuation_rate;
+		db1 = rdb1.array() * adagrad_b1.unaryExpr(adagrad_make).array() * (-lerning_rate) + db1.array() * attenuation_rate;
 		//db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
 
 		w1 = w1 + dw1;
