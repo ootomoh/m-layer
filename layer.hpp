@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "Eigen/Dense"
 
+//#define USE_ADAGRAD
+//#define USE_MOMENTUM
+
 template<class ActivateFunc,class dActivateFunc>
 class Layer{
 	int input_size,output_size;
@@ -17,8 +20,10 @@ class Layer{
 	Eigen::MatrixXf  u1;
 	Eigen::MatrixXf  z0;
 	Eigen::MatrixXf  d1;
+#ifdef USE_ADAGRAD
 	Eigen::MatrixXf  adagrad_w1;
 	Eigen::MatrixXf  adagrad_b1;
+#endif
 public:
 	Layer(int input_size,int output_size,int batch_size,std::string layer_name=""):
 		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name)
@@ -32,8 +37,10 @@ public:
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
+#ifdef USE_ADAGRAD
 		adagrad_w1 	= Eigen::MatrixXf::Zero(output_size,input_size);
 		adagrad_b1 	= Eigen::MatrixXf::Zero(output_size,1);
+#endif
 	}
 	~Layer(){
 	}
@@ -53,16 +60,40 @@ public:
 		return d1;
 	}
 	void reflect(){
-		const float lerning_rate = 0.1f;
+#ifdef USE_MOMENTUM
 		const float attenuation_rate = 0.9f;
+#endif
+#ifdef USE_ADAGRAD
 		const float adagrad_epsilon = 1.0f;
+		const float lerning_rate = 0.1f;
 		auto adagrad_make = [&adagrad_epsilon](float x)->float{return 1.0f/(std::sqrt(x)+adagrad_epsilon);};
 		auto adagrad_square = [](float x)->float{return x*x;};
 		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr(adagrad_square);
 		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr(adagrad_square);
-		dw1 = rdw1.array() * adagrad_w1.unaryExpr(adagrad_make).array() * (-lerning_rate) + dw1.array() * attenuation_rate;
-		db1 = rdb1.array() * adagrad_b1.unaryExpr(adagrad_make).array() * (-lerning_rate) + db1.array() * attenuation_rate;
+#else
+		const float lerning_rate = 0.01f;
+#endif
+		dw1 = rdw1.array()
+#ifdef USE_ADAGRAD
+			* adagrad_w1.unaryExpr(adagrad_make).array()
+#endif
+			* (-lerning_rate)
+#ifdef USE_MOMENTUM
+			+ dw1.array() * attenuation_rate
+#endif
+			;
+		db1 = rdb1.array() 
+#ifdef USE_ADAGRAD
+			* adagrad_b1.unaryExpr(adagrad_make).array() 
+#endif
+			* (-lerning_rate)
+#ifdef USE_MOMENTUM
+			+ db1.array() * attenuation_rate
+#endif
+			;
 		//db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
+		std::cout<<layer_name<<":dw = "<<std::endl<<dw1<<std::endl;
+		std::cout<<layer_name<<":db = "<<std::endl<<db1<<std::endl;
 
 		w1 = w1 + dw1;
 		b1 = b1 + db1;
