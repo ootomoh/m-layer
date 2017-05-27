@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include "Eigen/Dense"
 
-//#define USE_ADAGRAD
-//#define USE_MOMENTUM
+#define USE_ADAGRAD
+#define USE_MOMENTUM
 
 template<class ActivateFunc,class dActivateFunc>
 class Layer{
@@ -71,7 +71,7 @@ public:
 		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr(adagrad_square);
 		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr(adagrad_square);
 #else
-		const float lerning_rate = 0.01f;
+		const float lerning_rate = 0.03f;
 #endif
 		dw1 = rdw1.array()
 #ifdef USE_ADAGRAD
@@ -91,9 +91,8 @@ public:
 			+ db1.array() * attenuation_rate
 #endif
 			;
-		//db1 = rdb1 * (-lerning_rate) + db1 * attenuation_rate;
-		std::cout<<layer_name<<":dw = "<<std::endl<<dw1<<std::endl;
-		std::cout<<layer_name<<":db = "<<std::endl<<db1<<std::endl;
+		//std::cout<<layer_name<<":dw = "<<std::endl<<dw1<<std::endl;
+		//std::cout<<layer_name<<":db = "<<std::endl<<db1<<std::endl;
 
 		w1 = w1 + dw1;
 		b1 = b1 + db1;
