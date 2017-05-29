@@ -6,7 +6,7 @@
 #define USE_ADAGRAD
 #define USE_MOMENTUM
 
-template<class ActivateFunc,class dActivateFunc>
+template<class ActivationFunc,class dActivationFunc>
 class Layer{
 	int input_size,output_size;
 	int batch_size;
@@ -51,17 +51,17 @@ public:
 #endif
 		z0 = input;
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
-		return  u1.unaryExpr(ActivateFunc());
+		return  u1.unaryExpr(ActivationFunc());
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
-		d1 = u1.unaryExpr( dActivateFunc() ).array() * (w2.transpose()*d2).array();
+		d1 = u1.unaryExpr( dActivationFunc() ).array() * (w2.transpose()*d2).array();
 		rdw1 = d1*z0.transpose()/static_cast<float>(batch_size);
 		rdb1 = d1*Eigen::MatrixXf::Constant(batch_size,1,1.0f)/static_cast<float>(batch_size);
 		return d1;
 	}
 	void reflect(){
 #ifdef USE_MOMENTUM
-		const float attenuation_rate = 0.9f;
+		const float attenuation_rate = 0.5f;
 #endif
 #ifdef USE_ADAGRAD
 		const float adagrad_epsilon = 1.0f;

@@ -3,6 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include <random>
+#include <ctime>
 
 
 //#define SHOW_INPUT
@@ -13,10 +14,10 @@
 #include "layer.hpp"
 
 const int input_size = 8;
-const int layer0_output_size = 32;
+const int layer0_output_size = 8;
 const int layer1_output_size = 1;
 const int batch_size = 32;
-const int calc = 200000;
+const int calc = 20000;
 
 class Sigmoid{
 public:
@@ -61,6 +62,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 }
 
 int main(){
+	std::srand(std::time(NULL));
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	Layer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
