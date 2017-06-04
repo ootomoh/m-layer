@@ -136,7 +136,7 @@ public:
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
 		u1 = u1.unaryExpr([](float x){return std::exp(-x);});
-		u1 *= u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
+		u1 = u1* u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
 		return  u1;
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
