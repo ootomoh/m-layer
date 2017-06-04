@@ -119,11 +119,13 @@ public:
 };
 
 // ソフトマックス層
-template<class ActivationFunc,class dActivationFunc>
 class SoftmaxLayer : public Layer{
+	Eigen::VectorXf u1_0;
 public:
 	SoftmaxLayer(int input_size,int output_size,int batch_size,std::string layer_name=""):
-		Layer(input_size,output_size,batch_size,layer_name){}
+		Layer(input_size,output_size,batch_size,layer_name){
+			u1_0 = Eigen::VectorXf::Zero(batch_size);
+		}
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
 #ifdef SHOW_WEIGHT
 		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
@@ -131,7 +133,11 @@ public:
 #endif
 		z0 = input;
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
-		return  u1.unaryExpr(ActivationFunc());
+		u1_0 = u1.row(0).array();
+		u1.rowwise() -= u1_0.transpose();
+		u1 = u1.unaryExpr([](float x){return std::exp(-x);});
+		u1 *= u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
+		return  u1;
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
 		d1 = d2;

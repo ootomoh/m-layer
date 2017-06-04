@@ -17,7 +17,7 @@ const int input_size = 8;
 const int layer0_output_size = 8;
 const int layer1_output_size = 1;
 const int batch_size = 32;
-const int calc = 80000;
+const int calc = 80;
 
 class Sigmoid{
 public:
@@ -66,7 +66,7 @@ int main(){
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
-	SoftmaxLayer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
+	SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
 #ifdef SHOW_INPUT
