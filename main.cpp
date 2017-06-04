@@ -6,7 +6,7 @@
 #include <ctime>
 
 
-//#define SHOW_INPUT
+#define SHOW_INPUT
 #define SHOW_OUTPUT
 //#define SHOW_WEIGHT
 #define SHOW_WEIGHT_WHEN_DESTROY
@@ -14,10 +14,10 @@
 #include "layer.hpp"
 
 const int input_size = 8;
-const int layer0_output_size = 8;
+const int layer0_output_size = 16;
 const int layer1_output_size = 2;
-const int batch_size = 10;
-const int calc = 1000;
+const int batch_size = 20;
+const int calc = 4000;
 
 class Sigmoid{
 public:
@@ -53,8 +53,8 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 		float sum = 0.0f;
 		float *ptr = batch_input.data()+b*input_size;
 		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		if( sum < input_size/2.0f){
-		//if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum ){
+		std::cout<<sum<<" ";
+		if( sum < input_size * 0.333333f || input_size * 0.666666f < sum ){
 			batch_teacher(0,b)=0.0f;
 			batch_teacher(1,b)=1.0f;
 		}else{
@@ -62,6 +62,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 			batch_teacher(1,b)=0.0f;
 		}
 	}
+		std::cout<<std::endl;
 }
 
 int main(){
@@ -74,8 +75,8 @@ int main(){
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
 #ifdef SHOW_INPUT
-		std::cout<<"i="<<batch_input<<std::endl;
-		std::cout<<"t="<<batch_teacher<<std::endl;
+		std::cout<<"i="<<std::endl<<batch_input<<std::endl;
+		std::cout<<"t="<<std::endl<<batch_teacher<<std::endl;
 #endif
 		auto layer0_out = layer0.forwardPropagate(batch_input);
 		auto layer1_out = layer1.forwardPropagate(layer0_out);

@@ -32,8 +32,8 @@ public:
 		w1 			= Eigen::MatrixXf::Random(output_size,input_size);
 		dw1 		= Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 		= Eigen::MatrixXf::Random(output_size,input_size);
-		//b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
-		b1 			= Eigen::MatrixXf::Random(output_size,1);
+		b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
+		//b1 			= Eigen::MatrixXf::Random(output_size,1);
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
@@ -55,7 +55,7 @@ public:
 #endif
 #ifdef USE_ADAGRAD
 		const float adagrad_epsilon = 1.0f;
-		const float lerning_rate = 0.1f;
+		const float lerning_rate = 0.1;
 		auto adagrad_make = [&adagrad_epsilon](float x)->float{return 1.0f/(std::sqrt(x)+adagrad_epsilon);};
 		auto adagrad_square = [](float x)->float{return x*x;};
 		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr(adagrad_square);
@@ -136,6 +136,7 @@ public:
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
 		u1 = u1.unaryExpr([](float x){return std::exp(x);});
+		//std::cout<<"norm = "<<u1.colwise().norm()<<std::endl;
 		u1 = u1* u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
 		return  u1;
 	}
