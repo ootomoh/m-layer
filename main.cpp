@@ -65,8 +65,8 @@ int main(){
 	std::srand(std::time(NULL));
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
-	Layer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
-	Layer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
+	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
+	SoftmaxLayer<Step,dSigmoid> layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
 #ifdef SHOW_INPUT
@@ -80,7 +80,7 @@ int main(){
 		std::cout<<"o="<<layer1_out<<std::endl;
 		std::cout<<"e="<<error<<std::endl;
 #endif
-		layer1.setD2(error);
+		layer1.backPropagate(error,layer1.getW());
 		layer0.backPropagate(error,layer1.getW());
 
 		layer1.reflect();
