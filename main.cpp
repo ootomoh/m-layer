@@ -15,9 +15,9 @@
 
 const int input_size = 8;
 const int layer0_output_size = 8;
-const int layer1_output_size = 1;
-const int batch_size = 32;
-const int calc = 80;
+const int layer1_output_size = 2;
+const int batch_size = 10;
+const int calc = 1000;
 
 class Sigmoid{
 public:
@@ -53,11 +53,14 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 		float sum = 0.0f;
 		float *ptr = batch_input.data()+b*input_size;
 		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum )
-		//if( (sum/2.0f)-static_cast<float>(static_cast<int>(sum/2.0f)) > 0.49f )
+		if( sum < input_size/2.0f){
+		//if( sum < input_size/4.0f || 3.0f*input_size/4.0f < sum ){
 			batch_teacher(0,b)=0.0f;
-		else
+			batch_teacher(1,b)=1.0f;
+		}else{
 			batch_teacher(0,b)=1.0f;
+			batch_teacher(1,b)=0.0f;
+		}
 	}
 }
 
@@ -67,6 +70,7 @@ int main(){
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
+	//SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	for(int c = 0;c < calc;c++){
 		initLearningDataset(batch_input,batch_teacher);
 #ifdef SHOW_INPUT
@@ -75,6 +79,7 @@ int main(){
 #endif
 		auto layer0_out = layer0.forwardPropagate(batch_input);
 		auto layer1_out = layer1.forwardPropagate(layer0_out);
+		//auto error = - layer1_out + batch_teacher ;
 		auto error = layer1_out - batch_teacher ;
 #ifdef SHOW_OUTPUT
 		std::cout<<"o="<<layer1_out<<std::endl;

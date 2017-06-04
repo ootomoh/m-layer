@@ -135,7 +135,7 @@ public:
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
-		u1 = u1.unaryExpr([](float x){return std::exp(-x);});
+		u1 = u1.unaryExpr([](float x){return std::exp(x);});
 		u1 = u1* u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
 		return  u1;
 	}
