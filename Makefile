@@ -1,5 +1,9 @@
-exec_main: main.cpp layer.hpp
-	g++ -std=c++11 main.cpp -o $@ 
+exec_main: obj/main.o obj/mnist.o
+	g++ -std=c++11 $+ -o $@ 
+
+obj/%.o: %.cpp
+	g++ -c -std=c++11 $+ -o $@
+
 
 clean:
 	rm exec*

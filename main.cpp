@@ -5,17 +5,19 @@
 #include <random>
 #include <ctime>
 
+#include "mnist.hpp"
 
-#define SHOW_INPUT
+
+//#define SHOW_INPUT
 #define SHOW_OUTPUT
 //#define SHOW_WEIGHT
 #define SHOW_WEIGHT_WHEN_DESTROY
 
 #include "layer.hpp"
 
-const int input_size = 8;
-const int layer0_output_size = 16;
-const int layer1_output_size = 2;
+const int input_size = 28*28;
+const int layer0_output_size = 28*28;
+const int layer1_output_size = 10;
 const int batch_size = 20;
 const int calc = 4000;
 
@@ -45,7 +47,7 @@ public:
 	}
 };
 
-void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
+/*void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
 	std::mt19937 mt(std::random_device{}());
 	std::uniform_int_distribution<int> dist(0,1);
 	float input[input_size];
@@ -63,7 +65,7 @@ void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_tea
 		}
 	}
 		std::cout<<std::endl;
-}
+}*/
 
 int main(){
 	std::srand(std::time(NULL));
@@ -71,9 +73,14 @@ int main(){
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
-	//SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
+	mtk::MNISTAnalizer mnist;
+	if(mnist.loadMNISTData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
+		std::cerr<<"Invalid training data"<<std::endl;
+		return 1;
+	}
 	for(int c = 0;c < calc;c++){
-		initLearningDataset(batch_input,batch_teacher);
+		mnist.setToMatrix(batch_input,batch_teacher,batch_size);
+		//initLearningDataset(batch_input,batch_teacher);//
 #ifdef SHOW_INPUT
 		std::cout<<"i="<<std::endl<<batch_input<<std::endl;
 		std::cout<<"t="<<std::endl<<batch_teacher<<std::endl;

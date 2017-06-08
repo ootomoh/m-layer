@@ -32,12 +32,14 @@ void MNISTAnalizer::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,
 int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_filename){
 	std::ifstream image_ifs(image_filename,std::ios::binary);
 	std::ifstream label_ifs(label_filename,std::ios::binary);
-	if(! image_ifs|| !label_ifs ){
+	if(!image_ifs|| !label_ifs ){
 		return 1;
 	}
 
 	int8_t magic_number,amount,row,col;
 	int label;
+	char read_1byte;
+	int read_1byte_int;
 	image_ifs.read((char*)&magic_number,sizeof(magic_number));
 	magic_number = reverse( magic_number );
 	image_ifs.read((char*)&amount,sizeof(amount));
@@ -53,14 +55,17 @@ int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_fi
 	for(int a = 0;a < data_amount;a++){
 		MNISTData *data = new MNISTData;
 		label_ifs.read((char*)&label,sizeof(char));
-		data->label = reverse( label );
+		data->label = ( label );
 		for(int i = 0;i < 28*28;i++){
-			image_ifs.read((char*)data->data + i,sizeof(char));
+			image_ifs.read((char*)&read_1byte_int,sizeof(char));
+			read_1byte_int &= 0xf;
+			data->data[i] = read_1byte_int/255.0f;
 		}
 		data_vector.push_back(data);
 	}
 	image_ifs.close();
 	label_ifs.close();
+	return 0;
 }
 
 MNISTAnalizer::~MNISTAnalizer(){
