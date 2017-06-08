@@ -2,3 +2,4 @@ exec*
 .*.swp
 *.csv
 *.o
+*/a.out
