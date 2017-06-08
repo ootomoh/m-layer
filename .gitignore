@@ -3,3 +3,5 @@ exec*
 *.csv
 *.o
 */a.out
+./output-saver
+./logfiles*
