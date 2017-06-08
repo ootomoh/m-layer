@@ -4,6 +4,7 @@ int main(){
 	const int batch_size = 10;
 	const int input_size = 28*28;
 	const int teacher_size = 10;
+	const int loop = 1100000;
 	Eigen::MatrixXf input(input_size,batch_size);
 	Eigen::MatrixXf teacher(teacher_size,batch_size);
 
@@ -13,7 +14,10 @@ int main(){
 		return 1;
 	}
 
-	mnist.setToMatrix(input,teacher,batch_size);
+	for(int i = 0;i < loop;i++){
+		std::cout<<"loop : "<<i<<" / "<<loop<<std::endl;
+		mnist.setToMatrix(input,teacher,batch_size);
+	}
 
 	std::cout<<"input"<<std::endl<<input<<std::endl;
 	std::cout<<"teacher"<<std::endl<<teacher<<std::endl;

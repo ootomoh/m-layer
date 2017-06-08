@@ -17,6 +17,15 @@ int MNISTAnalizer::reverse(int n){
 	return ((int)a3 << 24) + ((int)a2 << 16) + ((int)a1 << 8) + a0;
 }
 
+void print(float *data){
+	for(int i = 0;i < 28;i++){
+		for(int j = 0;j < 28;j++){
+			printf("%.3f ",data[i*28+j]);
+		}
+		printf("\n");
+	}
+}
+
 void MNISTAnalizer::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size){
 	teacher.setZero();
 	for(int i = 0;i < batch_size;i++){
@@ -36,7 +45,7 @@ int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_fi
 		return 1;
 	}
 
-	int8_t magic_number,amount,row,col;
+	int magic_number,amount,row,col;
 	int label;
 	char read_1byte;
 	int read_1byte_int;
@@ -52,14 +61,21 @@ int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_fi
 	magic_number = reverse( magic_number );
 	label_ifs.read((char*)&amount,sizeof(amount));
 	amount = reverse( amount );
+	//std::cout<<"magic_number = "<<(int)magic_number<<std::endl<<"row = "<<(int)row<<std::endl<<"col = " <<(int)col<<std::endl<<"amount = "<<(int)amount<<std::endl;
 	for(int a = 0;a < data_amount;a++){
 		MNISTData *data = new MNISTData;
 		label_ifs.read((char*)&label,sizeof(char));
+		label &= 0xf;
 		data->label = ( label );
 		for(int i = 0;i < 28*28;i++){
 			image_ifs.read((char*)&read_1byte_int,sizeof(char));
 			read_1byte_int &= 0xf;
 			data->data[i] = read_1byte_int/255.0f;
+		}
+		if( label > 9 ){
+			std::cout<<"label index = "<< a <<std::endl;
+			print(data->data);
+			return 1;
 		}
 		data_vector.push_back(data);
 	}

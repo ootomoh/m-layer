@@ -16,10 +16,10 @@
 #include "layer.hpp"
 
 const int input_size = 28*28;
-const int layer0_output_size = 28*28;
+const int layer0_output_size = 14*14;
 const int layer1_output_size = 10;
 const int batch_size = 20;
-const int calc = 4000;
+const int calc = 40;
 
 class Sigmoid{
 public:
@@ -79,6 +79,9 @@ int main(){
 		return 1;
 	}
 	for(int c = 0;c < calc;c++){
+#if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
+		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
+#endif
 		mnist.setToMatrix(batch_input,batch_teacher,batch_size);
 		//initLearningDataset(batch_input,batch_teacher);//
 #ifdef SHOW_INPUT
