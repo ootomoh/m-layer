@@ -11,7 +11,8 @@
 //#define SHOW_INPUT
 //#define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-//#define SHOW_WEIGHT_WHEN_DESTROY
+#define SHOW_WEIGHT_WHEN_DESTROY
+#define SHOW_ERROR
 
 #include "layer.hpp"
 
@@ -79,6 +80,11 @@ int main(){
 		return 1;
 	}
 	for(int c = 0;c < calc;c++){
+		if( c%1000 == 0 ){
+			std::cout<<">>>calc"<<c<<std::endl;
+		}else{
+			std::cout<<">>>ignore"<<std::endl;
+		}
 #if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
 		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
 #endif
@@ -94,6 +100,8 @@ int main(){
 		auto error = layer1_out - batch_teacher ;
 #ifdef SHOW_OUTPUT
 		std::cout<<"o="<<layer1_out<<std::endl;
+#endif
+#ifdef SHOW_ERROR
 		std::cout<<"e="<<error<<std::endl;
 #endif
 		layer1.backPropagate(error,layer1.getW());
@@ -103,6 +111,7 @@ int main(){
 		layer0.reflect();
 	}
 #ifdef SHOW_WEIGHT_WHEN_DESTROY
+	std::cout<<">>>weight"<<std::endl;
 	layer0.showWeight();
 	layer1.showWeight();
 #endif
