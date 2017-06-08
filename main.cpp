@@ -9,9 +9,9 @@
 
 
 //#define SHOW_INPUT
-#define SHOW_OUTPUT
+//#define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-#define SHOW_WEIGHT_WHEN_DESTROY
+//#define SHOW_WEIGHT_WHEN_DESTROY
 
 #include "layer.hpp"
 
@@ -19,7 +19,7 @@ const int input_size = 28*28;
 const int layer0_output_size = 14*14;
 const int layer1_output_size = 10;
 const int batch_size = 20;
-const int calc = 40;
+const int calc = 40000;
 
 class Sigmoid{
 public:
