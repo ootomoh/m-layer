@@ -7,7 +7,7 @@ obj/%.o: %.cpp
 
 clean:
 	rm exec*
-	obj/*.o
+	rm obj/*.o
 
 run: exec_main
 	time ./exec_main

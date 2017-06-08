@@ -135,9 +135,14 @@ public:
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
+		//std::cout<<"test:u1"<<std::endl<<u1<<std::endl;
 		u1 = u1.unaryExpr([](float x){return std::exp(x);});
 		//std::cout<<"norm = "<<u1.colwise().norm()<<std::endl;
-		u1 = u1* u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
+		std::cout<<"test:u1="<<u1<<std::endl;
+		//std::cout<<"test:u1.sum="<<u1.colwise().sum()<<std::endl;
+		std::cout<<"test:u1.sum.unary="<<u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).transpose().diagonal()<<std::endl;
+		u1 = u1*(u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).transpose().diagonal());
+		//std::cout<<"test:u1"<<std::endl<<u1<<std::endl;
 		return  u1;
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
