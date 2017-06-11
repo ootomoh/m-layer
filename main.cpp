@@ -19,7 +19,7 @@
 #include "layer.hpp"
 
 const int input_size = 28*28;
-const int layer0_output_size = 10*14;
+const int layer0_output_size = 12*28;
 const int layer1_output_size = 10;
 const int batch_size = 2048;
 const int calc = 1000;
@@ -82,7 +82,7 @@ int main(){
 		return 1;
 	}
 #ifdef TEST
-	if(mnist.loadMNISTTestData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
+	if(mnist.loadMNISTTestData("./t10k-images-idx3-ubyte","./t10k-labels-idx1-ubyte")){
 		std::cerr<<"Invalid test data"<<std::endl;
 		return 1;
 	}
@@ -126,20 +126,17 @@ int main(){
 #endif
 #ifdef TEST
 	int correct_count = 0;
-	const int test_amount = 60000;
+	const int test_amount = 10000;
 	Eigen::MatrixXf test_input(28*28,1);
 	for(int j = 0;j < test_amount;j++){
 		int correct = mnist.setTestDataToMatrix(test_input,j);
 	//	std::cout<<"correct = "<<correct<<std::endl;
 		auto layer0_out = layer0.testDataForwardPropagate(test_input);
 		auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
-		for(int i = 0;i < layer1_output_size;i++){
-	//		std::cout<<i<<" : "<<layer1_out(i,0)*100<<" %"<<std::endl;
-		}
 		if(layer1_out.maxCoeff() == layer1_out(correct,0)){
 			correct_count++;
 		}
 	}
-	std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
+	std::cout<<"correct ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
 #endif
 }

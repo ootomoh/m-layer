@@ -46,6 +46,10 @@ int MNISTLoader::setTestDataToMatrix(Eigen::MatrixXf& input,int index){
 	return data->label;
 }
 
+void MNISTLoader::showMNISTTestData(int index){
+	test_data_vector[index]->print();
+}
+
 int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_filename,std::vector<MNISTData*>& data_vector){
 	std::ifstream image_ifs(image_filename,std::ios::binary);
 	std::ifstream label_ifs(label_filename,std::ios::binary);
