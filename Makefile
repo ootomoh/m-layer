@@ -1,4 +1,4 @@
-exec_main: obj/main.o obj/mnist.o
+exec_main: obj/main.o obj/mnist.o 
 	g++ -std=c++11 $+ -o $@ 
 
 obj/%.o: %.cpp

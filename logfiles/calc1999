@@ -1,0 +1,32 @@
+training : 1999 / 100000
+t=
+0 0 0 0 1 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0
+0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0
+o=nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+e=nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan
+nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan

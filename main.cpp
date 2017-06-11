@@ -11,16 +11,16 @@
 //#define SHOW_INPUT
 #define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-//#define SHOW_WEIGHT_WHEN_DESTROY
-//#define SHOW_ERROR
+#define SHOW_WEIGHT_WHEN_DESTROY
+#define SHOW_ERROR
 
 #include "layer.hpp"
 
 const int input_size = 28*28;
-const int layer0_output_size = 14*14;
+const int layer0_output_size = 10*14;
 const int layer1_output_size = 10;
-const int batch_size = 20;
-const int calc = 4;
+const int batch_size = 100;
+const int calc = 2000;
 
 class Sigmoid{
 public:
@@ -92,8 +92,8 @@ int main(){
 		//initLearningDataset(batch_input,batch_teacher);//
 #ifdef SHOW_INPUT
 		std::cout<<"i="<<std::endl<<batch_input<<std::endl;
-#endif
 		std::cout<<"t="<<std::endl<<batch_teacher<<std::endl;
+#endif
 		auto layer0_out = layer0.forwardPropagate(batch_input);
 		auto layer1_out = layer1.forwardPropagate(layer0_out);
 		//auto error = - layer1_out + batch_teacher ;

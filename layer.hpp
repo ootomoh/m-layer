@@ -29,11 +29,12 @@ public:
 		input_size(input_size),output_size(output_size),batch_size(batch_size),layer_name(layer_name)
 	{
 		z0 			= Eigen::MatrixXf(input_size,batch_size);
-		w1 			= Eigen::MatrixXf::Random(output_size,input_size);
+		//w1 			= Eigen::MatrixXf::Random(output_size,input_size);
+		w1 			= Eigen::MatrixXf::Zero(output_size,input_size);
 		dw1 		= Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 		= Eigen::MatrixXf::Random(output_size,input_size);
-		b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
-		//b1 			= Eigen::MatrixXf::Random(output_size,1);
+		//b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
+		b1 			= Eigen::MatrixXf::Random(output_size,1);
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
@@ -44,8 +45,18 @@ public:
 	}
 	~Layer(){
 	}
-	virtual Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input) = 0;
 	virtual Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2) = 0;
+	virtual void Activation() = 0;
+	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
+#ifdef SHOW_WEIGHT
+		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
+		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
+#endif
+		z0 = input;
+		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
+		Activation();
+		return u1;
+	}
 
 
 
@@ -101,19 +112,14 @@ class HiddenLayer : public Layer{
 public:
 	HiddenLayer(int input_size,int output_size,int batch_size,std::string layer_name=""):
 		Layer(input_size,output_size,batch_size,layer_name){}
-	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
-#ifdef SHOW_WEIGHT
-		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
-		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
-#endif
-		z0 = input;
-		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
-		return  u1.unaryExpr(ActivationFunc());
+	void Activation(){
+		u1 = u1.unaryExpr(ActivationFunc());
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
 		d1 = u1.unaryExpr( dActivationFunc() ).array() * (w2.transpose()*d2).array();
 		rdw1 = d1*z0.transpose()/static_cast<float>(batch_size);
 		rdb1 = d1*Eigen::MatrixXf::Constant(batch_size,1,1.0f)/static_cast<float>(batch_size);
+		//std::cout<<this->layer_name<<": d1 = "<<d1<<std::endl;
 		return d1;
 	}
 };
@@ -121,31 +127,30 @@ public:
 // ソフトマックス層
 class SoftmaxLayer : public Layer{
 	Eigen::VectorXf u1_0;
+	Eigen::MatrixXf denominator_diagnal;
 public:
 	SoftmaxLayer(int input_size,int output_size,int batch_size,std::string layer_name=""):
 		Layer(input_size,output_size,batch_size,layer_name){
 			u1_0 = Eigen::VectorXf::Zero(batch_size);
+			denominator_diagnal = Eigen::MatrixXf(batch_size,batch_size);
 		}
-	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
-#ifdef SHOW_WEIGHT
-		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
-		std::cout<<layer_name<<":b = "<<std::endl<<b1<<std::endl;
-#endif
-		z0 = input;
-		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
+
+	void Activation(){
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
-		//std::cout<<"test:u1"<<std::endl<<u1<<std::endl;
+		//std::cout<<"test:u1.max"<<std::endl<<u1.colwise().maxCoeff()<<std::endl;
 		u1 = u1.unaryExpr([](float x){return std::exp(x);});
 		//std::cout<<"norm = "<<u1.colwise().norm()<<std::endl;
-		std::cout<<"test:u1="<<u1<<std::endl;
 		//std::cout<<"test:u1.sum="<<u1.colwise().sum()<<std::endl;
-		std::cout<<"test:u1.sum.unary="<<u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).transpose().diagonal()<<std::endl;
-		u1 = u1*(u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).transpose().diagonal());
+		//std::cout<<"test:u1.sum.unary="<<u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;})<<std::endl;
+		denominator_diagnal = u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
+		u1 = u1 * denominator_diagnal;
+		//std::cout<<"sum = "<<u1.colwise().sum()<<std::endl;
 		//std::cout<<"test:u1"<<std::endl<<u1<<std::endl;
-		return  u1;
+
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
+		//std::cout<<this->layer_name<<": d1 = "<<d1<<std::endl;
 		d1 = d2;
 		return d1;
 	}
