@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <random>
 #include <ctime>
+#include <chrono>
 
 #include "mnist.hpp"
 
@@ -87,6 +88,7 @@ int main(){
 		return 1;
 	}
 #endif
+	auto start_time = std::chrono::system_clock::now();
 	for(int c = 0;c < calc;c++){
 		std::cout<<">>>calc"<<c<<std::endl;
 		if( (c+1)%1000 == 0 ){
@@ -119,6 +121,9 @@ int main(){
 		layer1.reflect();
 		layer0.reflect();
 	}
+	auto stop_time = std::chrono::system_clock::now();
+	auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(stop_time-start_time).count();
+	std::cout<<"elapsed time "<<elapsed_time<<" [s]"<<std::endl<<"calculation count"<<calc<<std::endl;
 #ifdef SHOW_WEIGHT_WHEN_DESTROY
 	std::cout<<">>>weight"<<std::endl;
 	layer0.showWeight();
