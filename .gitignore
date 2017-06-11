@@ -4,4 +4,4 @@ exec*
 *.o
 */a.out
 ./output-saver
-./logfiles*
+./logfiles/*
