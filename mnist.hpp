@@ -29,7 +29,7 @@ namespace mtk{
 		MNISTLoader();
 		~MNISTLoader();
 		void setTrainDataToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size);
-		int setTestDataToMatrix(Eigen::VectorXf& input,int index);
+		int setTestDataToMatrix(Eigen::MatrixXf& input,int index);
 		int loadMNISTTrainData(std::string image_filename,std::string label_filename);
 		int loadMNISTTestData(std::string image_filename,std::string label_filename);
 	};

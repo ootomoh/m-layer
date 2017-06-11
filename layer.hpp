@@ -56,8 +56,9 @@ public:
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
 		return Activation(u1);
 	}
-	Eigen::VectorXf testDataForwardPropagate(const Eigen::VectorXf& input){
-
+	Eigen::MatrixXf testDataForwardPropagate(const Eigen::MatrixXf& input){
+		Eigen::MatrixXf u = w1 * input + b1;
+		return Activation(u);
 	}
 
 
@@ -73,7 +74,7 @@ public:
 		adagrad_w1 = adagrad_w1 + rdw1.unaryExpr(adagrad_square);
 		adagrad_b1 = adagrad_b1 + rdb1.unaryExpr(adagrad_square);
 #else
-		const float lerning_rate = 0.03f;
+		const float lerning_rate = 0.1f;
 #endif
 		dw1 = rdw1.array()
 #ifdef USE_ADAGRAD

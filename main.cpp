@@ -9,18 +9,20 @@
 
 
 //#define SHOW_INPUT
-#define SHOW_OUTPUT
+//#define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-#define SHOW_WEIGHT_WHEN_DESTROY
-#define SHOW_ERROR
+//#define SHOW_WEIGHT_WHEN_DESTROY
+//#define SHOW_ERROR
+
+#define TEST
 
 #include "layer.hpp"
 
 const int input_size = 28*28;
 const int layer0_output_size = 10*14;
 const int layer1_output_size = 10;
-const int batch_size = 100;
-const int calc = 2000;
+const int batch_size = 2048;
+const int calc = 1000;
 
 class Sigmoid{
 public:
@@ -79,11 +81,18 @@ int main(){
 		std::cerr<<"Invalid training data"<<std::endl;
 		return 1;
 	}
+#ifdef TEST
+	if(mnist.loadMNISTTestData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
+		std::cerr<<"Invalid test data"<<std::endl;
+		return 1;
+	}
+#endif
 	for(int c = 0;c < calc;c++){
+		std::cout<<">>>calc"<<c<<std::endl;
 		if( (c+1)%1000 == 0 ){
-			std::cout<<">>>calc"<<c<<std::endl;
+			//	std::cout<<">>>calc"<<c<<std::endl;
 		}else{
-			std::cout<<">>>ignore"<<std::endl;
+			//	std::cout<<">>>ignore"<<std::endl;
 		}
 #if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
 		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
@@ -114,5 +123,23 @@ int main(){
 	std::cout<<">>>weight"<<std::endl;
 	layer0.showWeight();
 	layer1.showWeight();
+#endif
+#ifdef TEST
+	int correct_count = 0;
+	const int test_amount = 60000;
+	Eigen::MatrixXf test_input(28*28,1);
+	for(int j = 0;j < test_amount;j++){
+		int correct = mnist.setTestDataToMatrix(test_input,j);
+	//	std::cout<<"correct = "<<correct<<std::endl;
+		auto layer0_out = layer0.testDataForwardPropagate(test_input);
+		auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
+		for(int i = 0;i < layer1_output_size;i++){
+	//		std::cout<<i<<" : "<<layer1_out(i,0)*100<<" %"<<std::endl;
+		}
+		if(layer1_out.maxCoeff() == layer1_out(correct,0)){
+			correct_count++;
+		}
+	}
+	std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
 #endif
 }

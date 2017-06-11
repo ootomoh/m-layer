@@ -38,7 +38,7 @@ void MNISTLoader::setTrainDataToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& t
 	}
 }
 
-int MNISTLoader::setTestDataToMatrix(Eigen::VectorXf& input,int index){
+int MNISTLoader::setTestDataToMatrix(Eigen::MatrixXf& input,int index){
 	MNISTData* data = test_data_vector[index];
 	for(int j = 0;j < 28*28;j++){
 		input(j) = data->data[j];
