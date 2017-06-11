@@ -21,8 +21,8 @@
 const int input_size = 28*28;
 const int layer0_output_size = 12*28;
 const int layer1_output_size = 10;
-const int batch_size = 2048;
-const int calc = 1000;
+const int batch_size = 4096;
+const int calc = 1200;
 
 class Sigmoid{
 public:
