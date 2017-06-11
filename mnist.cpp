@@ -6,7 +6,7 @@ using namespace mtk;
 MNISTLoader::MNISTLoader(){
 	std::random_device rnd;
 	mt19937.seed(rnd());
-	dist = std::uniform_int_distribution<int>{0,data_amount-1};
+	dist = std::uniform_int_distribution<int>{0,train_data_amount-1};
 }
 int MNISTLoader::reverse(int n){
 	char a0,a1,a2,a3;
@@ -26,7 +26,7 @@ void print(float *data){
 	}
 }
 
-void MNISTLoader::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size){
+void MNISTLoader::setTrainDataToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size){
 	teacher.setZero();
 	for(int i = 0;i < batch_size;i++){
 		int index = dist( mt19937 );
@@ -38,7 +38,15 @@ void MNISTLoader::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,in
 	}
 }
 
-int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_filename){
+int MNISTLoader::setTestDataToMatrix(Eigen::VectorXf& input,int index){
+	MNISTData* data = test_data_vector[index];
+	for(int j = 0;j < 28*28;j++){
+		input(j) = data->data[j];
+	}
+	return data->label;
+}
+
+int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_filename,std::vector<MNISTData*>& data_vector){
 	std::ifstream image_ifs(image_filename,std::ios::binary);
 	std::ifstream label_ifs(label_filename,std::ios::binary);
 	if(!image_ifs|| !label_ifs ){
@@ -62,7 +70,7 @@ int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_file
 	label_ifs.read((char*)&amount,sizeof(amount));
 	amount = reverse( amount );
 	//std::cout<<"magic_number = "<<(int)magic_number<<std::endl<<"row = "<<(int)row<<std::endl<<"col = " <<(int)col<<std::endl<<"amount = "<<(int)amount<<std::endl;
-	for(int a = 0;a < data_amount;a++){
+	for(int a = 0;a < train_data_amount;a++){
 		MNISTData *data = new MNISTData;
 		label_ifs.read((char*)&label,sizeof(char));
 		label &= 0xf;
@@ -77,11 +85,18 @@ int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_file
 			print(data->data);
 			return 1;
 		}
-		train_data_vector.push_back(data);
+		data_vector.push_back(data);
 	}
 	image_ifs.close();
 	label_ifs.close();
 	return 0;
+}
+
+int MNISTLoader::loadMNISTTrainData(std::string image_filename,std::string label_filename){
+	return this->loadMNISTData(image_filename,label_filename,train_data_vector);
+}
+int MNISTLoader::loadMNISTTestData(std::string image_filename,std::string label_filename){
+	return this->loadMNISTData(image_filename,label_filename,test_data_vector);
 }
 
 MNISTLoader::~MNISTLoader(){

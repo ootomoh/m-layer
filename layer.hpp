@@ -46,7 +46,7 @@ public:
 	~Layer(){
 	}
 	virtual Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2) = 0;
-	virtual void Activation() = 0;
+	virtual Eigen::MatrixXf Activation(Eigen::MatrixXf& u) = 0;
 	Eigen::MatrixXf forwardPropagate(const Eigen::MatrixXf& input){
 #ifdef SHOW_WEIGHT
 		std::cout<<layer_name<<":w = "<<std::endl<<w1<<std::endl;
@@ -54,10 +54,11 @@ public:
 #endif
 		z0 = input;
 		u1 = w1 * z0 + b1 * Eigen::MatrixXf::Constant(1,batch_size,1.0f);
-		Activation();
-		return u1;
+		return Activation(u1);
 	}
+	Eigen::VectorXf testDataForwardPropagate(const Eigen::VectorXf& input){
 
+	}
 
 
 	void reflect(){
@@ -112,14 +113,13 @@ class HiddenLayer : public Layer{
 public:
 	HiddenLayer(int input_size,int output_size,int batch_size,std::string layer_name=""):
 		Layer(input_size,output_size,batch_size,layer_name){}
-	void Activation(){
-		u1 = u1.unaryExpr(ActivationFunc());
+	Eigen::MatrixXf Activation(Eigen::MatrixXf& u){
+		return u.unaryExpr(ActivationFunc());
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
 		d1 = u1.unaryExpr( dActivationFunc() ).array() * (w2.transpose()*d2).array();
 		rdw1 = d1*z0.transpose()/static_cast<float>(batch_size);
 		rdb1 = d1*Eigen::MatrixXf::Constant(batch_size,1,1.0f)/static_cast<float>(batch_size);
-		//std::cout<<this->layer_name<<": d1 = "<<d1<<std::endl;
 		return d1;
 	}
 };
@@ -135,12 +135,13 @@ public:
 			denominator_diagnal = Eigen::MatrixXf(batch_size,batch_size);
 		}
 
-	void Activation(){
-		u1_0 = u1.row(0).array();
-		u1.rowwise() -= u1_0.transpose();
-		u1 = u1.unaryExpr([](float x){return std::exp(x);});
-		denominator_diagnal = u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
-		u1 = u1 * denominator_diagnal;
+	Eigen::MatrixXf Activation(Eigen::MatrixXf& u){
+		u1_0 = u.row(0).array();
+		u.rowwise() -= u1_0.transpose();
+		u = u.unaryExpr([](float x){return std::exp(x);});
+		denominator_diagnal = u.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
+		u = u * denominator_diagnal;
+		return u;
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
 		d1 = d2;

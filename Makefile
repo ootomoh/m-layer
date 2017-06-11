@@ -1,8 +1,8 @@
 exec_main: obj/main.o obj/mnist.o 
 	g++ -std=c++11 $+ -o $@ 
 
-obj/%.o: %.cpp
-	g++ -c -std=c++11 $+ -o $@ 
+obj/%.o: %.cpp layer.hpp
+	g++ -c -std=c++11 $< -o $@ 
 
 
 clean:

@@ -75,7 +75,7 @@ int main(){
 	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
 	mtk::MNISTLoader mnist;
-	if(mnist.loadMNISTData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
+	if(mnist.loadMNISTTrainData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
 		std::cerr<<"Invalid training data"<<std::endl;
 		return 1;
 	}
@@ -88,7 +88,7 @@ int main(){
 #if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
 		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
 #endif
-		mnist.setToMatrix(batch_input,batch_teacher,batch_size);
+		mnist.setTrainDataToMatrix(batch_input,batch_teacher,batch_size);
 		//initLearningDataset(batch_input,batch_teacher);//
 #ifdef SHOW_INPUT
 		std::cout<<"i="<<std::endl<<batch_input<<std::endl;
