@@ -33,8 +33,8 @@ public:
 		w1 			= Eigen::MatrixXf::Zero(output_size,input_size);
 		dw1 		= Eigen::MatrixXf::Random(output_size,input_size);
 		rdw1 		= Eigen::MatrixXf::Random(output_size,input_size);
-		//b1 			= Eigen::MatrixXf::Constant(output_size,1,0.0f);
-		b1 			= Eigen::MatrixXf::Random(output_size,1);
+		b1 			= Eigen::MatrixXf::Constant(output_size,1,0.1f);
+		//b1 			= Eigen::MatrixXf::Random(output_size,1);
 		db1 		= Eigen::MatrixXf::Random(output_size,1);
 		rdb1 		= Eigen::MatrixXf::Random(output_size,1);
 		u1 			= Eigen::MatrixXf::Zero(output_size,batch_size);
@@ -138,19 +138,11 @@ public:
 	void Activation(){
 		u1_0 = u1.row(0).array();
 		u1.rowwise() -= u1_0.transpose();
-		//std::cout<<"test:u1.max"<<std::endl<<u1.colwise().maxCoeff()<<std::endl;
 		u1 = u1.unaryExpr([](float x){return std::exp(x);});
-		//std::cout<<"norm = "<<u1.colwise().norm()<<std::endl;
-		//std::cout<<"test:u1.sum="<<u1.colwise().sum()<<std::endl;
-		//std::cout<<"test:u1.sum.unary="<<u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;})<<std::endl;
 		denominator_diagnal = u1.colwise().sum().unaryExpr([](float x){return 1.0f/x;}).asDiagonal();
 		u1 = u1 * denominator_diagnal;
-		//std::cout<<"sum = "<<u1.colwise().sum()<<std::endl;
-		//std::cout<<"test:u1"<<std::endl<<u1<<std::endl;
-
 	}
 	Eigen::MatrixXf backPropagate(const Eigen::MatrixXf& d2,const Eigen::MatrixXf& w2){
-		//std::cout<<this->layer_name<<": d1 = "<<d1<<std::endl;
 		d1 = d2;
 		return d1;
 	}

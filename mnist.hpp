@@ -6,7 +6,7 @@
 #include "Eigen/Core"
 
 namespace mtk{
-	class MNISTAnalizer{
+	class MNISTLoader{
 		// MNIST のデータ変数
 		const static int data_amount = 60000;
 		const static int data_dim = 28;
@@ -21,11 +21,11 @@ namespace mtk{
 			float data[data_dim*data_dim];
 			int label;
 		};
-		std::vector<MNISTData*> data_vector;
+		std::vector<MNISTData*> train_data_vector;
 		int reverse(int n);
 	public:
-		MNISTAnalizer();
-		~MNISTAnalizer();
+		MNISTLoader();
+		~MNISTLoader();
 		void setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size);
 		int loadMNISTData(std::string image_filename,std::string label_filename);
 	};

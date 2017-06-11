@@ -74,7 +74,7 @@ int main(){
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
 	HiddenLayer<Sigmoid,dSigmoid> layer0(input_size,layer0_output_size,batch_size,"layer0");
 	SoftmaxLayer layer1(layer0_output_size,layer1_output_size,batch_size,"layer1");
-	mtk::MNISTAnalizer mnist;
+	mtk::MNISTLoader mnist;
 	if(mnist.loadMNISTData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
 		std::cerr<<"Invalid training data"<<std::endl;
 		return 1;

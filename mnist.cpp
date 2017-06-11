@@ -3,12 +3,12 @@
 using namespace mtk;
 
 // コンストラクタでは乱数の初期化のみ行う
-MNISTAnalizer::MNISTAnalizer(){
+MNISTLoader::MNISTLoader(){
 	std::random_device rnd;
 	mt19937.seed(rnd());
 	dist = std::uniform_int_distribution<int>{0,data_amount-1};
 }
-int MNISTAnalizer::reverse(int n){
+int MNISTLoader::reverse(int n){
 	char a0,a1,a2,a3;
 	a0 = (n>>24) & 255;
 	a1 = (n>>16) & 255;
@@ -26,11 +26,11 @@ void print(float *data){
 	}
 }
 
-void MNISTAnalizer::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size){
+void MNISTLoader::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,int batch_size){
 	teacher.setZero();
 	for(int i = 0;i < batch_size;i++){
 		int index = dist( mt19937 );
-		MNISTData* data = data_vector[index];
+		MNISTData* data = train_data_vector[index];
 		for(int j = 0;j < data_dim*data_dim;j++){
 			input(j,i) = data->data[j];
 		}
@@ -38,7 +38,7 @@ void MNISTAnalizer::setToMatrix(Eigen::MatrixXf& input,Eigen::MatrixXf& teacher,
 	}
 }
 
-int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_filename){
+int MNISTLoader::loadMNISTData(std::string image_filename,std::string label_filename){
 	std::ifstream image_ifs(image_filename,std::ios::binary);
 	std::ifstream label_ifs(label_filename,std::ios::binary);
 	if(!image_ifs|| !label_ifs ){
@@ -77,15 +77,15 @@ int MNISTAnalizer::loadMNISTData(std::string image_filename,std::string label_fi
 			print(data->data);
 			return 1;
 		}
-		data_vector.push_back(data);
+		train_data_vector.push_back(data);
 	}
 	image_ifs.close();
 	label_ifs.close();
 	return 0;
 }
 
-MNISTAnalizer::~MNISTAnalizer(){
-	for(auto data : data_vector){
+MNISTLoader::~MNISTLoader(){
+	for(auto data : train_data_vector){
 		delete data;
 	}
 }
