@@ -12,7 +12,7 @@
 //#define SHOW_INPUT
 //#define SHOW_OUTPUT
 //#define SHOW_WEIGHT
-#define SHOW_WEIGHT_WHEN_DESTROY
+//#define SHOW_WEIGHT_WHEN_DESTROY
 //#define SHOW_ERROR
 
 #define TEST
@@ -72,6 +72,7 @@ public:
 }*/
 
 int main(){
+	std::cout<<">>>default.out"<<std::endl;
 	std::srand(std::time(NULL));
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
@@ -120,6 +121,27 @@ int main(){
 
 		layer1.reflect();
 		layer0.reflect();
+
+#ifdef TEST
+	std::cout<<">>>correct_ration.out"<<std::endl;
+		if( c % 10 == 9){
+			std::cout<<"----"<<c<<" test----"<<std::endl;
+			int correct_count = 0;
+			const int test_amount = 10000;
+			Eigen::MatrixXf test_input(28*28,1);
+			for(int j = 0;j < test_amount;j++){
+				int correct = mnist.setTestDataToMatrix(test_input,j);
+				//	std::cout<<"correct = "<<correct<<std::endl;
+				auto layer0_out = layer0.testDataForwardPropagate(test_input);
+				auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
+				if(layer1_out.maxCoeff() == layer1_out(correct,0)){
+					correct_count++;
+				}
+			}
+			std::cout<<"correct ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
+		}
+	std::cout<<">>>default.out"<<std::endl;
+#endif
 	}
 	auto stop_time = std::chrono::system_clock::now();
 	auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(stop_time-start_time).count();
@@ -130,12 +152,13 @@ int main(){
 	layer1.showWeight();
 #endif
 #ifdef TEST
+	std::cout<<"----last test----"<<std::endl;
 	int correct_count = 0;
 	const int test_amount = 10000;
 	Eigen::MatrixXf test_input(28*28,1);
 	for(int j = 0;j < test_amount;j++){
 		int correct = mnist.setTestDataToMatrix(test_input,j);
-	//	std::cout<<"correct = "<<correct<<std::endl;
+		//	std::cout<<"correct = "<<correct<<std::endl;
 		auto layer0_out = layer0.testDataForwardPropagate(test_input);
 		auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
 		if(layer1_out.maxCoeff() == layer1_out(correct,0)){
