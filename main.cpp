@@ -51,25 +51,6 @@ public:
 	}
 };
 
-/*void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
-	std::mt19937 mt(std::random_device{}());
-	std::uniform_int_distribution<int> dist(0,1);
-	float input[input_size];
-	for(int b = 0; b < batch_size;b++){
-		float sum = 0.0f;
-		float *ptr = batch_input.data()+b*input_size;
-		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		std::cout<<sum<<" ";
-		if( sum < input_size * 0.333333f || input_size * 0.666666f < sum ){
-			batch_teacher(0,b)=0.0f;
-			batch_teacher(1,b)=1.0f;
-		}else{
-			batch_teacher(0,b)=1.0f;
-			batch_teacher(1,b)=0.0f;
-		}
-	}
-		std::cout<<std::endl;
-}*/
 
 int main(){
 	std::cout<<">>>default.out"<<std::endl;
@@ -91,12 +72,7 @@ int main(){
 #endif
 	auto start_time = std::chrono::system_clock::now();
 	for(int c = 0;c < calc;c++){
-		std::cout<<">>>calc"<<c<<std::endl;
-		if( (c+1)%1000 == 0 ){
-			//	std::cout<<">>>calc"<<c<<std::endl;
-		}else{
-			//	std::cout<<">>>ignore"<<std::endl;
-		}
+		std::cout<<"calc "<<c<<std::endl;
 #if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
 		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
 #endif
@@ -123,9 +99,9 @@ int main(){
 		layer0.reflect();
 
 #ifdef TEST
-	std::cout<<">>>correct_ration.out"<<std::endl;
+	std::cout<<">>>correct_ratio.out"<<std::endl;
 		if( c % 10 == 9){
-			std::cout<<"----"<<c<<" test----"<<std::endl;
+			std::cout<<"----"<<(c+1)<<" test----"<<std::endl;
 			int correct_count = 0;
 			const int test_amount = 10000;
 			Eigen::MatrixXf test_input(28*28,1);
