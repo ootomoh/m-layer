@@ -22,8 +22,8 @@
 const int input_size = 28*28;
 const int layer0_output_size = 10*28;
 const int layer1_output_size = 10;
-const int batch_size = 1<<13;
-const int calc = 1200;
+const int batch_size = 1<<12;
+const int calc = 1500;
 
 class Sigmoid{
 public:
@@ -91,7 +91,7 @@ int main(){
 #endif
 	auto start_time = std::chrono::system_clock::now();
 	for(int c = 0;c < calc;c++){
-		std::cout<<">>>calc"<<c<<std::endl;
+		std::cout<<"calc"<<c<<std::endl;
 		if( (c+1)%1000 == 0 ){
 			//	std::cout<<">>>calc"<<c<<std::endl;
 		}else{
@@ -128,7 +128,7 @@ int main(){
 			std::cout<<"----"<<c<<" test----"<<std::endl;
 			int correct_count = 0;
 			const int test_amount = 10000;
-			Eigen::MatrixXf test_input(28*28,1);
+			Eigen::MatrixXf test_input(input_size,1);
 			for(int j = 0;j < test_amount;j++){
 				int correct = mnist.setTestDataToMatrix(test_input,j);
 				//	std::cout<<"correct = "<<correct<<std::endl;
