@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <random>
 #include <ctime>
-#include <chrono>
 
 #include "mnist.hpp"
 
@@ -20,10 +19,10 @@
 #include "layer.hpp"
 
 const int input_size = 28*28;
-const int layer0_output_size = 10*28;
+const int layer0_output_size = 20*14;
 const int layer1_output_size = 10;
-const int batch_size = 1<<12;
-const int calc = 1500;
+const int batch_size = 2048;
+const int calc = 1000;
 
 class Sigmoid{
 public:
@@ -72,7 +71,6 @@ public:
 }*/
 
 int main(){
-	std::cout<<">>>default.out"<<std::endl;
 	std::srand(std::time(NULL));
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
@@ -84,14 +82,13 @@ int main(){
 		return 1;
 	}
 #ifdef TEST
-	if(mnist.loadMNISTTestData("./t10k-images-idx3-ubyte","./t10k-labels-idx1-ubyte")){
+	if(mnist.loadMNISTTestData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
 		std::cerr<<"Invalid test data"<<std::endl;
 		return 1;
 	}
 #endif
-	auto start_time = std::chrono::system_clock::now();
 	for(int c = 0;c < calc;c++){
-		std::cout<<"calc"<<c<<std::endl;
+		std::cout<<">>>calc"<<c<<std::endl;
 		if( (c+1)%1000 == 0 ){
 			//	std::cout<<">>>calc"<<c<<std::endl;
 		}else{
@@ -121,50 +118,48 @@ int main(){
 
 		layer1.reflect();
 		layer0.reflect();
-
-#ifdef TEST
-	std::cout<<">>>correct_ration.out"<<std::endl;
 		if( c % 10 == 9){
-			std::cout<<"----"<<c<<" test----"<<std::endl;
+#ifdef TEST
 			int correct_count = 0;
-			const int test_amount = 10000;
-			Eigen::MatrixXf test_input(input_size,1);
+			const int test_amount = 60000;
+			Eigen::MatrixXf test_input(28*28,1);
 			for(int j = 0;j < test_amount;j++){
 				int correct = mnist.setTestDataToMatrix(test_input,j);
 				//	std::cout<<"correct = "<<correct<<std::endl;
 				auto layer0_out = layer0.testDataForwardPropagate(test_input);
 				auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
+				for(int i = 0;i < layer1_output_size;i++){
+					//		std::cout<<i<<" : "<<layer1_out(i,0)*100<<" %"<<std::endl;
+				}
 				if(layer1_out.maxCoeff() == layer1_out(correct,0)){
 					correct_count++;
 				}
 			}
-			std::cout<<"correct ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
-		}
-	std::cout<<">>>default.out"<<std::endl;
+			std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
 #endif
+		}
 	}
-	auto stop_time = std::chrono::system_clock::now();
-	auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(stop_time-start_time).count();
-	std::cout<<"elapsed time "<<elapsed_time<<" [s]"<<std::endl<<"calculation count"<<calc<<std::endl;
 #ifdef SHOW_WEIGHT_WHEN_DESTROY
 	std::cout<<">>>weight"<<std::endl;
 	layer0.showWeight();
 	layer1.showWeight();
 #endif
 #ifdef TEST
-	std::cout<<"----last test----"<<std::endl;
 	int correct_count = 0;
-	const int test_amount = 10000;
+	const int test_amount = 60000;
 	Eigen::MatrixXf test_input(28*28,1);
 	for(int j = 0;j < test_amount;j++){
 		int correct = mnist.setTestDataToMatrix(test_input,j);
 		//	std::cout<<"correct = "<<correct<<std::endl;
 		auto layer0_out = layer0.testDataForwardPropagate(test_input);
 		auto layer1_out = layer1.testDataForwardPropagate(layer0_out);
+		for(int i = 0;i < layer1_output_size;i++){
+			//		std::cout<<i<<" : "<<layer1_out(i,0)*100<<" %"<<std::endl;
+		}
 		if(layer1_out.maxCoeff() == layer1_out(correct,0)){
 			correct_count++;
 		}
 	}
-	std::cout<<"correct ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
+	std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
 #endif
 }
