@@ -23,6 +23,7 @@ const int layer0_output_size = 20*14;
 const int layer1_output_size = 10;
 const int batch_size = 2048;
 const int calc = 1000;
+const int test_interval = 20;
 
 class Sigmoid{
 public:
@@ -71,6 +72,7 @@ public:
 }*/
 
 int main(){
+	std::cout<<">>>default.out"<<std::endl;
 	std::srand(std::time(NULL));
 	Eigen::MatrixXf batch_input = Eigen::MatrixXf::Random(input_size,batch_size);
 	Eigen::MatrixXf batch_teacher = Eigen::MatrixXf::Random(layer1_output_size,batch_size);
@@ -88,15 +90,12 @@ int main(){
 	}
 #endif
 	for(int c = 0;c < calc;c++){
-		std::cout<<">>>calc"<<c<<std::endl;
 		if( (c+1)%1000 == 0 ){
 			//	std::cout<<">>>calc"<<c<<std::endl;
 		}else{
 			//	std::cout<<">>>ignore"<<std::endl;
 		}
-#if defined(SHOW_INPUT) || defined(SHOW_OUTPUT)
-		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
-#endif
+		std::cout<<"training : "<<c<<" / "<<calc<<" : time() = "<<time(NULL)<<std::endl;
 		mnist.setTrainDataToMatrix(batch_input,batch_teacher,batch_size);
 		//initLearningDataset(batch_input,batch_teacher);//
 #ifdef SHOW_INPUT
@@ -118,7 +117,7 @@ int main(){
 
 		layer1.reflect();
 		layer0.reflect();
-		if( c % 20 == 19){
+		if( c % test_interval == test_interval-1){
 #ifdef TEST
 			int correct_count = 0;
 			const int test_amount = 600;
@@ -135,7 +134,10 @@ int main(){
 					correct_count++;
 				}
 			}
+			std::cout<<">>>correct_parcentage.out"<<std::endl;
+		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
 			std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
+			std::cout<<">>>default.out"<<std::endl;
 #endif
 		}
 	}
