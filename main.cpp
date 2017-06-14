@@ -118,10 +118,10 @@ int main(){
 
 		layer1.reflect();
 		layer0.reflect();
-		if( c % 10 == 9){
+		if( c % 20 == 19){
 #ifdef TEST
 			int correct_count = 0;
-			const int test_amount = 60000;
+			const int test_amount = 600;
 			Eigen::MatrixXf test_input(28*28,1);
 			for(int j = 0;j < test_amount;j++){
 				int correct = mnist.setTestDataToMatrix(test_input,j);
@@ -146,7 +146,7 @@ int main(){
 #endif
 #ifdef TEST
 	int correct_count = 0;
-	const int test_amount = 60000;
+	const int test_amount = 600;
 	Eigen::MatrixXf test_input(28*28,1);
 	for(int j = 0;j < test_amount;j++){
 		int correct = mnist.setTestDataToMatrix(test_input,j);

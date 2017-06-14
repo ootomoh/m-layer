@@ -3,7 +3,6 @@
 #include <random>
 #include <string>
 #include <vector>
-#include <stdio.h>
 #include "Eigen/Core"
 
 namespace mtk{
@@ -21,13 +20,6 @@ namespace mtk{
 		public:
 			float data[data_dim*data_dim];
 			int label;
-			void print(){
-				for(int i = 0;i < data_dim;i++){
-					for(int j = 0;j , data_dim;j++){
-						printf("%.2lx",((int)data[j+i*data_dim])&0xff);
-					}
-				}
-			}
 		};
 		std::vector<MNISTData*> train_data_vector;
 		std::vector<MNISTData*> test_data_vector;
@@ -40,6 +32,5 @@ namespace mtk{
 		int setTestDataToMatrix(Eigen::MatrixXf& input,int index);
 		int loadMNISTTrainData(std::string image_filename,std::string label_filename);
 		int loadMNISTTestData(std::string image_filename,std::string label_filename);
-		void showMNISTTestData(int index);
 	};
 }
