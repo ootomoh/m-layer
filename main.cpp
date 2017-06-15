@@ -21,8 +21,8 @@
 const int input_size = 28*28;
 const int layer0_output_size = 20*14;
 const int layer1_output_size = 10;
-const int batch_size = 2048;
-const int calc = 1000;
+const int batch_size = 1<<12;
+const int calc = 1400;
 const int test_interval = 20;
 
 class Sigmoid{
@@ -50,27 +50,6 @@ public:
 		return (x>0.0f?x:0.0f);
 	}
 };
-
-/*void initLearningDataset(Eigen::MatrixXf &batch_input,Eigen::MatrixXf &batch_teacher){
-	std::mt19937 mt(std::random_device{}());
-	std::uniform_int_distribution<int> dist(0,1);
-	float input[input_size];
-	for(int b = 0; b < batch_size;b++){
-		float sum = 0.0f;
-		float *ptr = batch_input.data()+b*input_size;
-		std::generate(ptr,ptr+input_size,[&mt,&dist,&sum](){return (dist(mt)==0?0.0f:(sum+=1.0f,1.0f));});
-		std::cout<<sum<<" ";
-		if( sum < input_size * 0.333333f || input_size * 0.666666f < sum ){
-			batch_teacher(0,b)=0.0f;
-			batch_teacher(1,b)=1.0f;
-		}else{
-			batch_teacher(0,b)=1.0f;
-			batch_teacher(1,b)=0.0f;
-		}
-	}
-		std::cout<<std::endl;
-}*/
-
 int main(){
 	std::cout<<">>>default.out"<<std::endl;
 	std::srand(std::time(NULL));
