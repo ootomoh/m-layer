@@ -21,7 +21,7 @@
 const int input_size = 28*28;
 const int layer0_output_size = 20*14;
 const int layer1_output_size = 10;
-const int batch_size = 1<<12;
+const int batch_size = 1<<13;
 const int calc = 1400;
 const int test_interval = 20;
 
@@ -63,7 +63,7 @@ int main(){
 		return 1;
 	}
 #ifdef TEST
-	if(mnist.loadMNISTTestData("./train-images-idx3-ubyte","./train-labels-idx1-ubyte")){
+	if(mnist.loadMNISTTestData("./t10k-images-idx3-ubyte","./t10k-labels-idx1-ubyte")){
 		std::cerr<<"Invalid test data"<<std::endl;
 		return 1;
 	}
@@ -99,7 +99,7 @@ int main(){
 		if( c % test_interval == test_interval-1){
 #ifdef TEST
 			int correct_count = 0;
-			const int test_amount = 600;
+			const int test_amount = 10000;
 			Eigen::MatrixXf test_input(28*28,1);
 			for(int j = 0;j < test_amount;j++){
 				int correct = mnist.setTestDataToMatrix(test_input,j);
@@ -114,7 +114,7 @@ int main(){
 				}
 			}
 			std::cout<<">>>correct_parcentage.out"<<std::endl;
-		std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
+			std::cout<<"training : "<<c<<" / "<<calc<<std::endl;
 			std::cout<<"corest ratio : "<<correct_count/static_cast<float>(test_amount)*100.0f<<" %"<<std::endl; 
 			std::cout<<">>>default.out"<<std::endl;
 #endif
@@ -127,7 +127,7 @@ int main(){
 #endif
 #ifdef TEST
 	int correct_count = 0;
-	const int test_amount = 600;
+	const int test_amount = 10000;
 	Eigen::MatrixXf test_input(28*28,1);
 	for(int j = 0;j < test_amount;j++){
 		int correct = mnist.setTestDataToMatrix(test_input,j);
