@@ -2,7 +2,6 @@
 
 using namespace mtk;
 
-// コンストラクタでは乱数の初期化のみ行う
 MNISTLoader::MNISTLoader(){
 	std::random_device rnd;
 	mt19937.seed(rnd());

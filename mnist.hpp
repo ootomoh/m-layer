@@ -8,6 +8,7 @@
 namespace mtk{
 	class MNISTLoader{
 		// MNIST のデータ変数
+		// いつかファイルから読み込みたい
 		const static int train_data_amount = 60000;
 		const static int data_dim = 28;
 
